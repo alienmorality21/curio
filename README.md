@@ -41,12 +41,6 @@ Fact Republic pages to discover facts, or a third-party fact provider. Images
 are loaded directly from the URLs attached to the facts and are not bundled
 with the app. Individual cited source links can lead to third-party publishers.
 
-The page is publicly accessible and its `robots.txt` does not disallow it, but
-an explicit content or image reuse license was not found, and the site's terms
-URL was unavailable when checked. Public access does not itself grant
-redistribution rights. Confirm permission with Fact Republic before
-redistributing the app or its content.
-
 ## License
 
 The Curio application code is licensed under the MIT License; see
