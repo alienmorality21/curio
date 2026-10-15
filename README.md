@@ -47,6 +47,14 @@ URL was unavailable when checked. Public access does not itself grant
 redistribution rights. Confirm permission with Fact Republic before
 redistributing the app or its content.
 
+## License
+
+The Curio application code is licensed under the MIT License; see
+[LICENSE](LICENSE). This license covers the code in this repository only. It
+does not grant rights to Fact Republic's website, facts, images, or other
+third-party content. Review the source and reuse notes above before using or
+redistributing that content.
+
 ## Run on an Android phone
 
 1. Enable Developer options and USB debugging on the phone.
