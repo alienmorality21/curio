@@ -63,6 +63,31 @@ the repository on GitHub, select the pencil button, make your edit, and choose
 the change on a fork and open a pull request instead. Browser edits cannot run
 the app's tests.
 
+Start with one of these files:
+
+- [Edit this README](https://github.com/alienmorality21/curio/edit/main/README.md)
+  to improve the instructions.
+- [Edit the fact screen](https://github.com/alienmorality21/curio/edit/main/lib/screens/discover_screen.dart)
+  to change how the feed looks and behaves.
+- [Edit settings](https://github.com/alienmorality21/curio/edit/main/lib/screens/settings_screen.dart)
+  to change the app's preferences and theme controls.
+
+**Want to edit and run checks in your browser?** Select **Code > Codespaces >
+Create codespace on main** on the repository page, or
+[open the Codespaces creation page](https://github.com/codespaces/new?repo=alienmorality21%2Fcurio&ref=main).
+When setup finishes, open the integrated terminal and run:
+
+```sh
+flutter analyze
+flutter test
+```
+
+Codespaces uses GitHub's included monthly quota, and additional use may be
+billed. See [GitHub's Codespaces billing information](https://docs.github.com/en/billing/concepts/product-billing/github-codespaces).
+The first Codespace setup downloads the Flutter SDK and may take a few minutes.
+In VS Code, you can also open the Command Palette, choose **Tasks: Run Task**,
+then select **Curio: Analyze** or **Curio: Run tests**.
+
 **Want to run the app while you edit?** Install
 [Flutter](https://docs.flutter.dev/get-started/install) and
 [VS Code](https://code.visualstudio.com/), then:
@@ -102,6 +127,16 @@ the app's tests.
 
 For more detail, see [CONTRIBUTING.md](CONTRIBUTING.md). Contributions to the
 code do not grant permission to reuse Fact Republic's content.
+
+## Check changes and get an APK
+
+Every pull request and update to `main` automatically runs `flutter analyze`
+and `flutter test`, builds a release APK, and attaches the APK to the
+workflow run. To download it, open the successful run under
+[GitHub Actions](https://github.com/alienmorality21/curio/actions), then find
+the **curio-android-apk** artifact at the bottom of the run summary. Workflow
+artifacts are temporary; use [GitHub Releases](https://github.com/alienmorality21/curio/releases/latest)
+for the published APK.
 
 ## Run on an Android phone
 
