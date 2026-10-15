@@ -51,21 +51,6 @@ Fact Republic pages to discover facts, or a third-party fact provider. Images
 are loaded directly from the URLs attached to the facts and are not bundled
 with the app. Individual cited source links can lead to third-party publishers.
 
-## Update Curio on Android
-
-Open **Settings > App updates > Check for updates**. Curio checks the latest
-stable release in this repository, downloads its APK to the phone, and verifies
-the published SHA-256 digest before opening the Android installer. Android
-requires you to approve the installation; if prompted, allow Curio to install
-apps from this source. Curio cannot silently install or bypass Android's
-confirmation. Updates are available after a newer APK is published in
-[GitHub Releases](https://github.com/alienmorality21/curio/releases).
-Android only accepts an update when it has the same app ID and signing
-certificate as the installed app. The current CI APK is a temporary test build
-signed with that runner's debug key; it is not suitable for publishing as an
-in-place update. Before publishing a new release APK, configure a stable
-signing key matching the existing release and increase the app version.
-
 ## License
 
 The Curio application code is licensed under the MIT License; see
