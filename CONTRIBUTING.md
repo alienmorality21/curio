@@ -94,3 +94,8 @@ license does not cover Fact Republic's website, facts, images, or other
 third-party content. Do not add bundled scraped content or imply that code
 licensing grants permission to redistribute it. See the source and reuse notes
 in the [README](README.md#where-the-facts-come-from).
+
+The fact's **Source** link is a citation for the fact; it is not necessarily
+the image credit or image license. Reverse-image-search results only show that
+an image appears elsewhere, not that it is free to reuse. Ask the image rights
+holder before publishing or redistributing it.

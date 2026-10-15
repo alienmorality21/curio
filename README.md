@@ -31,6 +31,27 @@ manager.
   line spacing.
 - Hide images or collapse source and search actions for a more compact view.
 
+## Logo idea
+
+The proposed Curio mark is an open book with a small golden sparkle, set in a
+rounded deep-indigo square, with a short **Curio** wordmark beside it. The book
+signals reading and the sparkle suggests discovery. It is designed as an
+original app concept, not copied from Fact Republic. [View the SVG logo
+proposal](screenshots/curio-logo-proposal.svg).
+
+## Screenshots
+
+These app-screen previews are rendered from Curio's real Flutter widgets with
+synthetic sample facts and no Fact Republic images, so the repository does not
+republish third-party pictures. Run `flutter test --update-goldens
+test/screenshot_preview_test.dart` to regenerate them.
+To launch the same safe sample-data preview on a connected Android device, run
+`flutter run -t tool/curio_screenshot_preview.dart`.
+
+| Discover | Settings |
+| --- | --- |
+| ![Curio Discover screen](screenshots/curio-discover.png) | ![Curio Settings screen](screenshots/curio-settings.png) |
+
 ## Where the facts come from
 
 Fact discovery uses only the HTML of Fact Republic's Random Facts Generator
@@ -40,6 +61,27 @@ publisher-provided cited source, and Fact Republic share URL from the page's
 Fact Republic pages to discover facts, or a third-party fact provider. Images
 are loaded directly from the URLs attached to the facts and are not bundled
 with the app. Individual cited source links can lead to third-party publishers.
+
+The page is publicly accessible and its `robots.txt` does not disallow it, but
+the live generator's per-fact **Source** link cites the fact, not necessarily
+the accompanying image. Images are hosted separately on Fact Republic's
+WordPress uploads/CDN, with no image license or credit visible in the
+generator entries checked. Your reverse-image-search screenshot shows the
+student photo appearing on other sites; that confirms other online uses, not
+who owns the image or what reuse license applies. Fact Republic's About page
+says it pairs facts with images, but does not state an image-reuse license.
+Its footer links to About, Contact, and Privacy Policy, but not terms; the
+common `/terms/`, `/terms-of-use/`, and `/terms-and-conditions/` addresses
+returned not found when checked on 15 October 2026.
+
+Treat the image rights as **unverified**. Public access, a fact citation, an
+image appearing on several websites, and a permissive `robots.txt` do not by
+themselves grant permission to copy, cache, publish, or redistribute the
+images. Ask Fact Republic and, if needed, the actual image rights holder for
+permission before distributing images. The app currently displays images
+remotely and caches them on the user's device; they are not bundled in this
+repository or APK. See Fact Republic's [About page](https://factrepublic.com/about-us/)
+and [Privacy Policy](https://factrepublic.com/privacy-policy/).
 
 ## License
 
