@@ -31,22 +31,9 @@ manager.
   line spacing.
 - Hide images or collapse source and search actions for a more compact view.
 
-## Logo idea
-
-The proposed Curio mark is an open book with a small golden sparkle, set in a
-rounded deep-indigo square, with a short **Curio** wordmark beside it. The book
-signals reading and the sparkle suggests discovery. It is designed as an
-original app concept, not copied from Fact Republic. [View the SVG logo
-proposal](screenshots/curio-logo-proposal.svg).
-
 ## Screenshots
 
-These app-screen previews are rendered from Curio's real Flutter widgets with
-synthetic sample facts and no Fact Republic images, so the repository does not
-republish third-party pictures. Run `flutter test --update-goldens
-test/screenshot_preview_test.dart` to regenerate them.
-To launch the same safe sample-data preview on a connected Android device, run
-`flutter run -t tool/curio_screenshot_preview.dart`.
+Screenshots from the app:
 
 | Discover | Settings |
 | --- | --- |

@@ -97,5 +97,5 @@ in the [README](README.md#where-the-facts-come-from).
 
 The fact's **Source** link is a citation for the fact; it is not necessarily
 the image credit or image license. Reverse-image-search results only show that
-an image appears elsewhere, not that it is free to reuse. Ask the image rights
-holder before publishing or redistributing it.
+an image appears elsewhere, not that it is free to reuse. Confirm permission
+from the rights holder before publishing or redistributing an image.
