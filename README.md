@@ -55,6 +55,54 @@ does not grant rights to Fact Republic's website, facts, images, or other
 third-party content. Review the source and reuse notes above before using or
 redistributing that content.
 
+## Edit the app or contribute
+
+**Just want to suggest or make a small change in your browser?** Open a file in
+the repository on GitHub, select the pencil button, make your edit, and choose
+**Commit changes**. If you do not have write access, GitHub will offer to make
+the change on a fork and open a pull request instead. Browser edits cannot run
+the app's tests.
+
+**Want to run the app while you edit?** Install
+[Flutter](https://docs.flutter.dev/get-started/install) and
+[VS Code](https://code.visualstudio.com/), then:
+
+1. Fork this repository on GitHub and clone your fork:
+
+   ```powershell
+   git clone https://github.com/YOUR-USERNAME/curio.git
+   cd curio
+   ```
+
+2. Open the folder in VS Code and install the **Flutter** extension when
+   prompted. In the VS Code terminal, run:
+
+   ```powershell
+   flutter pub get
+   flutter run
+   ```
+
+   To run on a phone, connect an Android device with USB debugging enabled and
+   use `flutter devices` to find it. Alternatively, install a desktop or web
+   target supported by your Flutter setup.
+
+3. Create a branch for your change, run the checks, and commit it:
+
+   ```powershell
+   git switch -c my-change
+   flutter analyze
+   flutter test
+   git add .
+   git commit -m "Describe your change"
+   git push -u origin my-change
+   ```
+
+4. Open your fork on GitHub and select **Compare & pull request** so the change
+   can be reviewed and merged.
+
+For more detail, see [CONTRIBUTING.md](CONTRIBUTING.md). Contributions to the
+code do not grant permission to reuse Fact Republic's content.
+
 ## Run on an Android phone
 
 1. Enable Developer options and USB debugging on the phone.
