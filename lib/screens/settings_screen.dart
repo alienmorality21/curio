@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../app_theme.dart';
 import '../models/fact.dart';
+import '../services/github_update_service.dart';
 import '../widgets/fact_image.dart';
 import 'fact_detail_screen.dart';
 
@@ -38,6 +40,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late double _savedFactTextScale;
   late double _savedFactLineSpacing;
   String _searchQuery = '';
+  final GithubUpdateService _updateService = GithubUpdateService();
+  GithubUpdate? _availableUpdate;
+  String? _updateMessage;
+  String? _downloadedApkPath;
+  int _downloadedBytes = 0;
+  int _totalBytes = 0;
+  bool _isCheckingForUpdates = false;
+  bool _isDownloadingUpdate = false;
+  DateTime _lastDownloadProgressUpdate = DateTime.fromMillisecondsSinceEpoch(0);
 
   @override
   void initState() {
@@ -87,6 +98,94 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Could not save reading settings: $error')),
       );
+    }
+  }
+
+  Future<void> _checkForUpdates() async {
+    setState(() {
+      _isCheckingForUpdates = true;
+      _updateMessage = null;
+      _downloadedApkPath = null;
+    });
+    try {
+      final update = await _updateService.checkForUpdate();
+      if (!mounted) return;
+      setState(() {
+        _availableUpdate = update;
+        _updateMessage = update == null
+            ? 'You have the latest Curio version.'
+            : 'Curio ${update.version} is available.';
+      });
+    } on Exception catch (error, stackTrace) {
+      debugPrint(
+        'Could not check GitHub for Curio updates: $error\n$stackTrace',
+      );
+      if (mounted) {
+        setState(() {
+          _availableUpdate = null;
+          _updateMessage = 'Could not check for updates: $error';
+        });
+      }
+    } finally {
+      if (mounted) setState(() => _isCheckingForUpdates = false);
+    }
+  }
+
+  Future<void> _downloadAndInstallUpdate() async {
+    final update = _availableUpdate;
+    if (update == null || _isDownloadingUpdate) return;
+
+    setState(() {
+      _isDownloadingUpdate = true;
+      _downloadedBytes = 0;
+      _totalBytes = update.size;
+      _updateMessage = 'Downloading Curio ${update.version}…';
+      _downloadedApkPath = null;
+    });
+    try {
+      final path = await _updateService.downloadApk(
+        update,
+        onProgress: (receivedBytes, totalBytes) {
+          if (!mounted) return;
+          final now = DateTime.now();
+          if (receivedBytes != totalBytes &&
+              now.difference(_lastDownloadProgressUpdate).inMilliseconds <
+                  120) {
+            return;
+          }
+          _lastDownloadProgressUpdate = now;
+          setState(() {
+            _downloadedBytes = receivedBytes;
+            _totalBytes = totalBytes;
+          });
+        },
+      );
+      if (!mounted) return;
+      setState(() {
+        _downloadedApkPath = path;
+        _updateMessage = 'Download verified. Confirm the update in Android.';
+      });
+      await _updateService.openApkInstaller(path);
+    } on Exception catch (error, stackTrace) {
+      debugPrint('Could not install Curio update: $error\n$stackTrace');
+      if (mounted) {
+        setState(() => _updateMessage = 'Could not install the update: $error');
+      }
+    } finally {
+      if (mounted) setState(() => _isDownloadingUpdate = false);
+    }
+  }
+
+  Future<void> _openDownloadedInstaller() async {
+    final path = _downloadedApkPath;
+    if (path == null) return;
+    try {
+      await _updateService.openApkInstaller(path);
+    } on Exception catch (error, stackTrace) {
+      debugPrint('Could not open Android APK installer: $error\n$stackTrace');
+      if (mounted) {
+        setState(() => _updateMessage = 'Could not open the installer: $error');
+      }
     }
   }
 
@@ -212,6 +311,88 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             const SizedBox(height: 28),
+            if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) ...[
+              Text('App updates', style: theme.textTheme.titleLarge),
+              const SizedBox(height: 8),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        'Check GitHub Releases for a newer Curio APK. '
+                        'Downloads are verified before Android opens its '
+                        'installer; you must confirm the installation.',
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                      if (_updateMessage != null) ...[
+                        const SizedBox(height: 12),
+                        Text(
+                          _updateMessage!,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: _updateMessage!.startsWith('Could not')
+                                ? colors.error
+                                : colors.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                      if (_isDownloadingUpdate) ...[
+                        const SizedBox(height: 12),
+                        LinearProgressIndicator(
+                          value: _totalBytes == 0
+                              ? null
+                              : _downloadedBytes / _totalBytes,
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          '${(_downloadedBytes / 1048576).toStringAsFixed(1)} '
+                          '/ ${(_totalBytes / 1048576).toStringAsFixed(1)} MB',
+                          textAlign: TextAlign.end,
+                          style: theme.textTheme.labelMedium,
+                        ),
+                      ],
+                      const SizedBox(height: 12),
+                      if (_downloadedApkPath != null)
+                        FilledButton.icon(
+                          onPressed: _isDownloadingUpdate
+                              ? null
+                              : () => _openDownloadedInstaller(),
+                          icon: const Icon(Icons.install_mobile_rounded),
+                          label: const Text('Open Android installer'),
+                        )
+                      else if (_availableUpdate != null)
+                        FilledButton.icon(
+                          onPressed: _isDownloadingUpdate
+                              ? null
+                              : _downloadAndInstallUpdate,
+                          icon: const Icon(Icons.download_rounded),
+                          label: const Text('Download and install update'),
+                        ),
+                      OutlinedButton.icon(
+                        onPressed: _isCheckingForUpdates || _isDownloadingUpdate
+                            ? null
+                            : _checkForUpdates,
+                        icon: _isCheckingForUpdates
+                            ? const SizedBox.square(
+                                dimension: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Icon(Icons.system_update_rounded),
+                        label: Text(
+                          _isCheckingForUpdates
+                              ? 'Checking GitHub…'
+                              : 'Check for updates',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 28),
+            ],
             Row(
               children: [
                 Expanded(
@@ -267,8 +448,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       builder: (context) => FactDetailScreen(
                         fact: fact,
                         isSaved: true,
-                                factTextScale: _factTextScale,
-                                factLineSpacing: _factLineSpacing,
+                        factTextScale: _factTextScale,
+                        factLineSpacing: _factLineSpacing,
                         onToggleSaved: () {
                           setState(
                             () => _bookmarks.removeWhere(

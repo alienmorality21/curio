@@ -116,9 +116,14 @@ class FactStorage {
   }
 
   Future<void> updateCachedFact(Fact fact) async {
+    await updateCachedFacts([fact]);
+  }
+
+  Future<void> updateCachedFacts(List<Fact> facts) async {
+    if (facts.isEmpty) return;
     final database = await _database;
     await database.transaction((transaction) async {
-      await _storeFacts(transaction, [fact]);
+      await _storeFacts(transaction, facts);
     });
   }
 

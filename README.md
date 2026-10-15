@@ -30,6 +30,8 @@ manager.
 - Choose System, Dark, Light, or OLED black themes, and adjust text size and
   line spacing.
 - Hide images or collapse source and search actions for a more compact view.
+- Check GitHub Releases for app updates, download and verify the APK, then
+  confirm installation in Android.
 
 ## Screenshots
 
@@ -49,6 +51,21 @@ Fact Republic pages to discover facts, or a third-party fact provider. Images
 are loaded directly from the URLs attached to the facts and are not bundled
 with the app. Individual cited source links can lead to third-party publishers.
 
+## Update Curio on Android
+
+Open **Settings > App updates > Check for updates**. Curio checks the latest
+stable release in this repository, downloads its APK to the phone, and verifies
+the published SHA-256 digest before opening the Android installer. Android
+requires you to approve the installation; if prompted, allow Curio to install
+apps from this source. Curio cannot silently install or bypass Android's
+confirmation. Updates are available after a newer APK is published in
+[GitHub Releases](https://github.com/alienmorality21/curio/releases).
+Android only accepts an update when it has the same app ID and signing
+certificate as the installed app. The current CI APK is a temporary test build
+signed with that runner's debug key; it is not suitable for publishing as an
+in-place update. Before publishing a new release APK, configure a stable
+signing key matching the existing release and increase the app version.
+
 ## License
 
 The Curio application code is licensed under the MIT License; see
@@ -64,6 +81,16 @@ the repository on GitHub, select the pencil button, make your edit, and choose
 **Commit changes**. If you do not have write access, GitHub will offer to make
 the change on a fork and open a pull request instead. Browser edits cannot run
 the app's tests.
+
+## Edit for free
+
+No paid editor or cloud workspace is required. For the simplest change, use
+GitHub's browser editor described above. To run the app and tests locally, use
+the free [VS Code](https://code.visualstudio.com/) editor, the
+[Flutter SDK](https://docs.flutter.dev/get-started/install), and an Android
+phone connected over USB. Forks, pull requests, Flutter analysis, and tests
+work without Codespaces. Codespaces is optional; its included quota is limited
+and additional use may be billed.
 
 Start with one of these files:
 
@@ -137,8 +164,9 @@ and `flutter test`, builds a release APK, and attaches the APK to the
 workflow run. To download it, open the successful run under
 [GitHub Actions](https://github.com/alienmorality21/curio/actions), then find
 the **curio-android-apk** artifact at the bottom of the run summary. Workflow
-artifacts are temporary; use [GitHub Releases](https://github.com/alienmorality21/curio/releases/latest)
-for the published APK.
+artifacts are temporary test builds, not installable updates for an existing
+release. Use [GitHub Releases](https://github.com/alienmorality21/curio/releases/latest)
+for the published APK, signed with the configured stable release key.
 
 ## Run on an Android phone
 

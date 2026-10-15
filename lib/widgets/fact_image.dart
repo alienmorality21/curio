@@ -59,10 +59,20 @@ class _FactImageState extends State<FactImage> {
     final imageUrl = widget.imageUrl;
     if (imageUrl == null || imageUrl == _resolvedUrl) return;
     _resolvedUrl = imageUrl;
-    final stream = CachedNetworkImageProvider(
+    final pixelWidth =
+        (MediaQuery.sizeOf(context).width *
+                MediaQuery.devicePixelRatioOf(context))
+            .ceil()
+            .clamp(1, 2048);
+    final imageProvider = CachedNetworkImageProvider(
       imageUrl,
       cacheManager: FactImageCache.persistentCacheManager,
       cacheKey: widget.cacheKey ?? imageUrl,
+    );
+    final stream = ResizeImage.resizeIfNeeded(
+      pixelWidth,
+      null,
+      imageProvider,
     ).resolve(createLocalImageConfiguration(context));
     final listener = ImageStreamListener(
       (image, synchronousCall) {
@@ -103,6 +113,9 @@ class _FactImageState extends State<FactImage> {
         final width = constraints.maxWidth.isFinite
             ? constraints.maxWidth
             : MediaQuery.sizeOf(context).width;
+        final pixelWidth = (width * MediaQuery.devicePixelRatioOf(context))
+            .ceil()
+            .clamp(1, 2048);
         final screenCap = MediaQuery.sizeOf(context).height * 0.9;
         final maxHeight = (widget.maxHeight ?? screenCap)
             .clamp(1.0, screenCap)
@@ -126,6 +139,7 @@ class _FactImageState extends State<FactImage> {
                     cacheKey: widget.cacheKey ?? widget.imageUrl,
                     width: double.infinity,
                     height: height,
+                    memCacheWidth: pixelWidth,
                     fit: BoxFit.contain,
                     alignment: Alignment.center,
                     fadeInDuration: const Duration(milliseconds: 240),

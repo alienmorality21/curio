@@ -11,6 +11,7 @@ import '../repositories/fact_republic_repository.dart';
 import '../storage/fact_storage.dart';
 import '../storage/fact_image_cache.dart';
 import '../utils/brave_search.dart';
+import '../widgets/curio_logo_mark.dart';
 import '../widgets/fact_image.dart';
 import '../widgets/zoomable_fact_image.dart';
 import 'settings_screen.dart';
@@ -59,6 +60,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   String? _loadMoreMessage;
   late final FactStorage _storage;
   final FactImageCache _imageCache = FactImageCache();
+  final Set<String> _imageMetadataInProgress = {};
 
   @override
   void initState() {
@@ -247,23 +249,26 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
 
   Future<void> _cacheImages(List<Fact> facts) async {
     final updatedFacts = await _imageCache.cacheImages(facts);
-    final originalById = {for (final fact in facts) fact.id: fact};
+    final factsById = {for (final fact in _facts) fact.id: fact};
     final changed = updatedFacts
         .where(
-          (fact) => originalById[fact.id]?.imageCacheKey != fact.imageCacheKey,
+          (fact) =>
+              factsById[fact.id]?.imageCacheKey != fact.imageCacheKey &&
+              factsById.containsKey(fact.id) &&
+              !_imageMetadataInProgress.contains(fact.id),
         )
         .toList(growable: false);
     if (changed.isEmpty) return;
 
-    for (final fact in changed) {
-      try {
-        await _storage.updateCachedFact(fact);
-      } on Exception catch (error, stackTrace) {
-        debugPrint(
-          'Could not persist cached image metadata for ${fact.id}: '
-          '$error\n$stackTrace',
-        );
-      }
+    _imageMetadataInProgress.addAll(changed.map((fact) => fact.id));
+    try {
+      await _storage.updateCachedFacts(changed);
+    } on Exception catch (error, stackTrace) {
+      debugPrint(
+        'Could not persist cached image metadata: $error\n$stackTrace',
+      );
+    } finally {
+      _imageMetadataInProgress.removeAll(changed.map((fact) => fact.id));
     }
     if (!mounted) return;
     final updates = {for (final fact in changed) fact.id: fact};
@@ -277,13 +282,6 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
       _facts = nextFeed;
       _bookmarks = nextBookmarks;
     });
-    try {
-      await _storage.saveBookmarks(nextBookmarks);
-    } on Exception catch (error, stackTrace) {
-      debugPrint(
-        'Could not persist bookmark image metadata: $error\n$stackTrace',
-      );
-    }
   }
 
   Future<void> _toggleBookmark(Fact fact) async {
@@ -355,7 +353,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
               padding: const EdgeInsets.fromLTRB(20, 4, 14, 8),
               child: Row(
                 children: [
-                  Icon(Icons.auto_awesome_rounded, color: colors.primary),
+                  const CurioLogoMark(size: 30),
                   const SizedBox(width: 9),
                   Expanded(
                     child: Text(
